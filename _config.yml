@@ -1,0 +1,9 @@
+# Jekyll configuration for GitHub Pages
+# This tells Jekyll to include the .well-known folder
+
+include:
+  - .well-known
+
+# Disable Jekyll processing (optional, for static files only)
+# If you want faster builds and don't need Jekyll features:
+# plugins: []
