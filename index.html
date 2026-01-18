@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReMindless - Invitation Redirect</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #2A9D8F 0%, #1A6B61 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .message {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        .app-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: white;
+            color: #2A9D8F;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: transform 0.2s;
+        }
+        .app-link:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Welcome to ReMindless!</h1>
+        <div class="loader"></div>
+        <p class="message" id="message">Redirecting to app...</p>
+        <a href="#" id="appLink" class="app-link" style="display: none;">Open ReMindless App</a>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const invitedBy = urlParams.get('invitedBy');
+
+        // Check if this is an invitation link
+        if (window.location.pathname.includes('/invite') && token && invitedBy) {
+            // Try to open the app with custom scheme (fallback)
+            const appUrl = `remindless://invite?token=${token}&invitedBy=${invitedBy}`;
+            const messageEl = document.getElementById('message');
+            const appLinkEl = document.getElementById('appLink');
+            
+            // Try to open app immediately
+            window.location.href = appUrl;
+            
+            // After 2 seconds, show manual link if app didn't open
+            setTimeout(() => {
+                messageEl.textContent = "App didn't open automatically?";
+                appLinkEl.href = appUrl;
+                appLinkEl.style.display = 'inline-block';
+            }, 2000);
+        } else {
+            // Not an invitation link - show info page
+            document.getElementById('message').textContent = 'Invalid invitation link';
+            document.querySelector('.loader').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
