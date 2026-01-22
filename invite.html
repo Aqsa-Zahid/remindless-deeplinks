@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening Remindless App...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2A9D8F 0%, #1A6B61 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #2A9D8F, #1A6B61);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        
+        h1 {
+            color: #2A9D8F;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 20px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2A9D8F;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #2A9D8F, #1A6B61);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .info-box {
+            background: #f0f9f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #2A9D8F;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .info-box li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .info-box li:before {
+            content: "✓ ";
+            color: #2A9D8F;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .error {
+            display: none;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📱</div>
+        <h1 id="title">Opening Remindless App...</h1>
+        <p id="message">Please wait while we redirect you to the app</p>
+        
+        <div class="spinner" id="spinner"></div>
+        
+        <div id="manualButton" style="display: none;">
+            <a href="#" id="openAppBtn" class="button">Open App Manually</a>
+        </div>
+        
+        <div class="error" id="errorBox">
+            <strong>⚠ App Not Installed?</strong><br>
+            Please download the Remindless app first, then click the invitation link again.
+        </div>
+        
+        <div class="info-box">
+            <h3>What's happening?</h3>
+            <ul>
+                <li>Attempting to open Remindless app</li>
+                <li>Processing your invitation</li>
+                <li>If the app doesn't open, install it first</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                token: params.get('token'),
+                invitedBy: params.get('invitedBy')
+            };
+        }
+
+        // Build deep link
+        function buildDeepLink(token, invitedBy) {
+            return `remindless://invite?token=${token}&invitedBy=${invitedBy}`;
+        }
+
+        // Try to open the app
+        function openApp() {
+            const { token, invitedBy } = getUrlParams();
+            
+            if (!token || !invitedBy) {
+                document.getElementById('title').textContent = 'Invalid Invitation Link';
+                document.getElementById('message').textContent = 'This invitation link is missing required information.';
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('errorBox').style.display = 'block';
+                return;
+            }
+
+            const deepLink = buildDeepLink(token, invitedBy);
+            
+            // Attempt 1: Try custom scheme
+            console.log('Attempting to open:', deepLink);
+            window.location.href = deepLink;
+            
+            // Attempt 2: Show manual button after 2 seconds
+            setTimeout(() => {
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('manualButton').style.display = 'block';
+                document.getElementById('title').textContent = 'Click Below to Open App';
+                document.getElementById('message').textContent = 'If the app didn\'t open automatically, click the button below';
+                
+                // Set up manual button
+                document.getElementById('openAppBtn').href = deepLink;
+            }, 2000);
+            
+            // Attempt 3: Show error after 5 seconds
+            setTimeout(() => {
+                document.getElementById('errorBox').style.display = 'block';
+            }, 5000);
+        }
+
+        // Run on page load
+        window.onload = openApp;
+    </script>
+</body>
+</html>
