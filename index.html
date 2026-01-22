@@ -1,203 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReMindless - Join Invitation</title>
+    <title>Test Remindless Deep Link</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #2A9D8F 0%, #1A6B61 100%);
-            color: white;
-            padding: 20px;
-        }
-        .container {
-            text-align: center;
+            font-family: Arial, sans-serif;
             padding: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            width: 100%;
+            text-align: center;
+            background: linear-gradient(135deg, #2A9D8F 0%, #1A6B61 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .logo {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
-        h1 {
-            font-size: 2em;
-            margin-bottom: 15px;
-        }
-        .message {
-            font-size: 1.1em;
-            margin: 20px 0;
-            line-height: 1.6;
-        }
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 30px auto;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .buttons {
-            margin-top: 30px;
-        }
-        .btn {
-            display: inline-block;
-            padding: 15px 40px;
-            margin: 10px;
+        
+        .container {
             background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
             color: #2A9D8F;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.3s;
-            border: 2px solid white;
-            cursor: pointer;
+            margin-bottom: 30px;
         }
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .btn-secondary {
-            background: transparent;
+        
+        a {
+            display: inline-block;
+            background: linear-gradient(135deg, #2A9D8F, #1A6B61);
             color: white;
-            border: 2px solid white;
+            padding: 20px 40px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px;
+            transition: transform 0.3s;
         }
+        
+        a:hover {
+            transform: translateY(-2px);
+        }
+        
         .info {
-            font-size: 0.9em;
-            margin-top: 20px;
-            opacity: 0.9;
-        }
-        .hidden {
-            display: none;
+            margin-top: 30px;
+            padding: 15px;
+            background: #f0f9f7;
+            border-radius: 8px;
+            color: #2A9D8F;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">📱</div>
-        <h1>Welcome to ReMindless!</h1>
+        <h1>🔗 Test Remindless Deep Link</h1>
         
-        <!-- Loading State -->
-        <div id="loading">
-            <div class="loader"></div>
-            <p class="message">Opening ReMindless app...</p>
-        </div>
+        <!-- Test Link -->
+        <a href="remindless://invite?token=test123&invitedBy=testUser">
+            📱 Click to Open App
+        </a>
         
-        <!-- App Not Installed -->
-        <div id="not-installed" class="hidden">
-            <p class="message">
-                🎉 You've been invited to join ReMindless!<br>
-                Install the app to accept your invitation.
-            </p>
-            <div class="buttons">
-                <a href="#" id="playStoreLink" class="btn">
-                    Download from Play Store
-                </a>
-                <button onclick="tryOpenApp()" class="btn btn-secondary">
-                    I have the app
-                </button>
-            </div>
-            <p class="info">
-                After installing, click the invitation link again to join.
-            </p>
-        </div>
-        
-        <!-- Error State -->
-        <div id="error" class="hidden">
-            <p class="message">⚠️ Invalid invitation link</p>
-            <p class="info">Please request a new invitation.</p>
+        <div class="info">
+            <p><strong>Testing:</strong> Click the button above</p>
+            <p>If the app is installed, it should open automatically</p>
+            <p>If not, you'll see "No app found" error</p>
         </div>
     </div>
-
-    <script>
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        const invitedBy = urlParams.get('invitedBy');
-
-        // Elements
-        const loadingDiv = document.getElementById('loading');
-        const notInstalledDiv = document.getElementById('not-installed');
-        const errorDiv = document.getElementById('error');
-
-        // Check if valid invitation
-        if (!token || !invitedBy) {
-            showError();
-        } else {
-            tryOpenApp();
-        }
-
-        function tryOpenApp() {
-            // Custom scheme deep link (works if app is installed)
-            const appUrl = `remindless://invite?token=${token}&invitedBy=${invitedBy}`;
-            
-            console.log('Attempting to open app:', appUrl);
-            
-            // Try to open the app
-            window.location.href = appUrl;
-            
-            // Detect if app opened (works on most Android devices)
-            let appOpened = false;
-            
-            // Method 1: Blur detection
-            window.addEventListener('blur', function() {
-                appOpened = true;
-            });
-            
-            // Method 2: Visibility change
-            document.addEventListener('visibilitychange', function() {
-                if (document.hidden) {
-                    appOpened = true;
-                }
-            });
-            
-            // After 2.5 seconds, if app didn't open, show install option
-            setTimeout(() => {
-                if (!appOpened && !document.hidden) {
-                    showNotInstalled();
-                }
-            }, 2500);
-        }
-
-        function showNotInstalled() {
-            loadingDiv.classList.add('hidden');
-            notInstalledDiv.classList.remove('hidden');
-            
-            // Set Play Store link (update with your actual Play Store URL)
-            document.getElementById('playStoreLink').href = 
-                'https://play.google.com/store/apps/details?id=com.example.remindless_app';
-        }
-
-        function showError() {
-            loadingDiv.classList.add('hidden');
-            errorDiv.classList.remove('hidden');
-        }
-
-        // Handle page visibility change (user returns from app)
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                console.log('User returned to page');
-            }
-        });
-    </script>
 </body>
 </html>
