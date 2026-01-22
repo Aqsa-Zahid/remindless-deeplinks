@@ -3,6 +3,8 @@
   "target": {
     "namespace": "android_app",
     "package_name": "com.example.remindless_app",
-    "sha256_cert_fingerprints": ["163AE709EAC2C612D05FF4DD9106C92915E4423BB0DDBED47CD29F473507B26B"]
+    "sha256_cert_fingerprints": [
+      "163AE709EAC2C612D05FF4DD9106C92915E4423BB0DDBED47CD29F473507B26B"
+    ]
   }
 }]
